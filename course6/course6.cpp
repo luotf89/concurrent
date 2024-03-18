@@ -19,7 +19,13 @@ enum class Status {
   FULL
 };
 
-
+/*
+注意 如果多个线程共享一个 blockqueue 进行push操作
+需要等到所有线程的push操作都结束了之后
+才能进行close操作
+close 操作需要notify_all 所有的线程，原因是由于有的线程
+在push测或者pop测等待 condition_variable 的信号
+*/
 template<typename T>
 class BlockQueue {
   public:
@@ -173,8 +179,6 @@ void test0() {
     threads[i].join();
   }
 }
-
-
 
 int main() {
   std::cout << "============== test 0 ============" << std::endl;
